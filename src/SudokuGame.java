@@ -9,6 +9,7 @@ public class SudokuGame extends JFrame {
     private static final int SUBGRID_SIZE = 3; // 3x3 subgrids
     private JTextField[][] cells;
     private Generator generator;
+    private String currentDifficulty;
 
     public SudokuGame() {
         generator = new Generator();
@@ -35,6 +36,7 @@ public class SudokuGame extends JFrame {
     }
 
     private void startNewGame(String difficulty) {
+        currentDifficulty = difficulty;
         getContentPane().removeAll();
         cells = new JTextField[GRID_SIZE][GRID_SIZE];
         Container cp = getContentPane();
@@ -228,6 +230,7 @@ public class SudokuGame extends JFrame {
             }
             if (isValidSudoku(board)) {
                 JOptionPane.showMessageDialog(this, "Correct solution!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                startNewGame(currentDifficulty);
             } else {
                 JOptionPane.showMessageDialog(this, "Incorrect solution", "Error", JOptionPane.ERROR_MESSAGE);
             }
