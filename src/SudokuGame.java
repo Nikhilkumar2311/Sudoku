@@ -55,9 +55,10 @@ public class SudokuGame extends JFrame {
         JPanel buttonPanel = new JPanel();
         JButton btnNewGame = new JButton("New Game");
         JButton btnCheck = new JButton("Check");
-        // TODO: Auto Complete
+        JButton autobtn = new JButton("Auto-Complete");
         buttonPanel.add(btnNewGame);
         buttonPanel.add(btnCheck);
+        buttonPanel.add(autobtn);
 
         cp.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -73,6 +74,11 @@ public class SudokuGame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 checkSolution();
             }
+        });
+
+        autobtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) { autocomplete(); }
         });
 
         // Initialize the game when the application starts
@@ -126,6 +132,82 @@ public class SudokuGame extends JFrame {
                     cells[row][col].setEditable(true);
                     cells[row][col].setBackground(Color.WHITE);
                 }
+            }
+        }
+    }
+
+    private void autocomplete() {
+        int[][] board = getBoardFromGUI();
+        if (solveSudoku(board)) {
+            updateBoardInGUI(board);
+        } else {
+            JOptionPane.showMessageDialog(this, "The puzzle cannot be solved. Please check your inputs.");
+        }
+    }
+
+    private boolean solveSudoku(int[][] board) {
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                if (board[row][col] == 0) { // Empty cell
+                    for (int num = 1; num <= 9; num++) {
+                        if (isSafe(board, row, col, num)) {
+                            board[row][col] = num;
+
+                            if (solveSudoku(board)) {
+                                return true;
+                            }
+
+                            board[row][col] = 0; // Backtrack
+                        }
+                    }
+                    return false; // No valid number found, backtrack
+                }
+            }
+        }
+        return true; // Puzzle solved
+    }
+
+    private boolean isSafe(int[][] board, int row, int col, int num) {
+        // Check row and column
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == num || board[i][col] == num) {
+                return false;
+            }
+        }
+
+        // Check 3x3 sub-grid
+        int startRow = row - row % 3;
+        int startCol = col - col % 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[startRow + i][startCol + j] == num) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private int[][] getBoardFromGUI() {
+        int[][] board = new int[GRID_SIZE][GRID_SIZE];
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                String text = cells[row][col].getText();
+                if (text.isEmpty()) {
+                    board[row][col] = 0; // Empty cell
+                } else {
+                    board[row][col] = Integer.parseInt(text);
+                }
+            }
+        }
+        return board;
+    }
+
+    private void updateBoardInGUI(int[][] board) {
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                cells[row][col].setText(board[row][col] == 0 ? "" : String.valueOf(board[row][col]));
             }
         }
     }
