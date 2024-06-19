@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +21,7 @@ public class SudokuGame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
-        showDifficultySelection();
+        showDifficultySelection(); // Show difficulty selection dialog when the application starts
     }
 
     private void showDifficultySelection() {
@@ -37,11 +38,12 @@ public class SudokuGame extends JFrame {
 
     private void startNewGame(String difficulty) {
         currentDifficulty = difficulty;
-        getContentPane().removeAll();
+        getContentPane().removeAll(); // Clear the content pane
         cells = new JTextField[GRID_SIZE][GRID_SIZE];
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
+        // Create the Sudoku grid panel
         JPanel panel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
         for (int row = 0; row < GRID_SIZE; ++row) {
             for (int col = 0; col < GRID_SIZE; ++col) {
@@ -49,11 +51,17 @@ public class SudokuGame extends JFrame {
                 cells[row][col].setHorizontalAlignment(JTextField.CENTER);
                 cells[row][col].setFont(new Font("Monospaced", Font.BOLD, 20));
                 cells[row][col].setBorder(createCellBorder(row, col));
+
+                // Apply DigitFilter to each JTextField to allow only digits
+                PlainDocument doc = (PlainDocument) cells[row][col].getDocument();
+                doc.setDocumentFilter(new DigitFilter());
+
                 panel.add(cells[row][col]);
             }
         }
         cp.add(panel, BorderLayout.CENTER);
 
+        // Create buttons
         JPanel buttonPanel = new JPanel();
         JButton btnNewGame = new JButton("New Game");
         JButton btnCheck = new JButton("Check");
@@ -64,6 +72,7 @@ public class SudokuGame extends JFrame {
 
         cp.add(buttonPanel, BorderLayout.SOUTH);
 
+        // Button action listeners
         btnNewGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -89,6 +98,7 @@ public class SudokuGame extends JFrame {
         repaint();
     }
 
+    // To Borders in the Grid
     private Border createCellBorder(int row, int col) {
         int top = (row % SUBGRID_SIZE == 0) ? 2 : 1;
         int left = (col % SUBGRID_SIZE == 0) ? 2 : 1;
@@ -121,6 +131,7 @@ public class SudokuGame extends JFrame {
                 break;
         }
 
+        // Generate a new Sudoku grid
         Grid grid = generator.generate(emptyCells);
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
@@ -139,6 +150,16 @@ public class SudokuGame extends JFrame {
     }
 
     private void autocomplete() {
+        // Clear the full board
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                if (cells[row][col].isEditable()) {
+                    cells[row][col].setText("");
+                }
+            }
+        }
+
+        // Solve the Sudoku puzzle
         int[][] board = getBoardFromGUI();
         if (solveSudoku(board)) {
             updateBoardInGUI(board);
@@ -265,6 +286,6 @@ public class SudokuGame extends JFrame {
     }
 
     public static void main(String[] args) {
-        new SudokuGame();
+        new SudokuGame(); // Start the Sudoku game
     }
 }
