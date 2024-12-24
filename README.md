@@ -63,9 +63,13 @@ and interactive Sudoku board.
 
 4. **Solution Validation**:
    - The application checks the user's input against the Sudoku rules (no duplicates in rows, columns, and 3x3 subgrids).
-   - If the solution is correct, a success message is displayed; otherwise, an error message indicates the solution is incorrect or incomplete.
+   - A success message is displayed if the solution is correct; otherwise, an error message indicates the solution is incorrect or incomplete.
+  
+![Selection](https://github.com/user-attachments/assets/4fb1bc63-7f44-43f0-938c-ba135ddb73a2)
 
 ### Conclusion
-This Sudoku game application provides an engaging and interactive way for users to play Sudoku puzzles at various difficulty levels. By leveraging a robust puzzle 
-generator and solver, it ensures that each puzzle is solvable and offers a challenging experience. The use of Swing for the GUI makes the application visually appealing 
+This Sudoku game application provides an engaging and interactive way for users to play Sudoku puzzles at various difficulty levels. Leveraging a robust puzzle 
+generator and solver ensures that each puzzle is solvable and offers a challenging experience. Swing for the GUI makes the application visually appealing 
 and user-friendly.
+
+![Main](https://github.com/user-attachments/assets/ba172ea5-c808-451e-b420-e2975bfa6743)
